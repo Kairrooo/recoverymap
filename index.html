@@ -46,6 +46,7 @@ svg.body .sil{fill:#1d2027;stroke:#30343e;stroke-width:1}
 svg.body .m{stroke:#0c0d10;stroke-width:1.2;cursor:pointer;transition:fill .25s,opacity .2s}
 svg.body .m:hover{stroke:#fff;stroke-width:1.6}
 svg.body .m.sel{stroke:#fff;stroke-width:2.2}
+svg.body .deco{fill:none;stroke:rgba(12,13,16,.55);stroke-width:1;pointer-events:none}
 svg.body .m.draft{stroke:var(--accent);stroke-width:2;stroke-dasharray:3 2}
 .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--muted);justify-content:center}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
@@ -117,28 +118,31 @@ input[type=datetime-local],select{background:var(--panel2);border:1px solid var(
 <script id="app">
 (function(){
 var MUSCLES = {
-  chest:{n:"Chest",h:72}, frontDelt:{n:"Front delts",h:48}, sideDelt:{n:"Side delts",h:48}, rearDelt:{n:"Rear delts",h:48},
+  upperChest:{n:"Upper chest",h:72}, chest:{n:"Mid/lower chest",h:72}, neck:{n:"Neck",h:48}, serratus:{n:"Serratus",h:36}, frontDelt:{n:"Front delts",h:48}, sideDelt:{n:"Side delts",h:48}, rearDelt:{n:"Rear delts",h:48},
   traps:{n:"Traps",h:48}, biceps:{n:"Biceps",h:48}, triceps:{n:"Triceps",h:48}, forearms:{n:"Forearms",h:36},
   abs:{n:"Abs",h:36}, obliques:{n:"Obliques",h:36}, lats:{n:"Lats",h:72}, upperBack:{n:"Upper back",h:72},
   lowerBack:{n:"Lower back",h:72}, glutes:{n:"Glutes",h:72}, quads:{n:"Quads",h:72}, hamstrings:{n:"Hamstrings",h:72},
-  adductors:{n:"Adductors",h:48}, calves:{n:"Calves",h:36}
+  adductors:{n:"Adductors",h:48}, calves:{n:"Calves",h:36}, tibialis:{n:"Shins (tibialis)",h:36}
 };
 var INT = {light:0.75, normal:1, hard:1.25};
 var SECONDARY = 0.5;
 
 // Exercise library: [name, group, primary, secondary, search aliases]
 var EX = [
- ["Barbell bench press","Chest",["chest"],["frontDelt","triceps"],"bench flat"],
- ["Dumbbell bench press","Chest",["chest"],["frontDelt","triceps"],"db bench flat"],
- ["Incline barbell bench press","Chest",["chest","frontDelt"],["triceps"],"incline bench"],
- ["Incline dumbbell press","Chest",["chest","frontDelt"],["triceps"],"incline db"],
+ ["Barbell bench press","Chest",["chest"],["upperChest","frontDelt","triceps"],"bench flat"],
+ ["Dumbbell bench press","Chest",["chest"],["upperChest","frontDelt","triceps"],"db bench flat"],
+ ["Incline barbell bench press","Chest",["upperChest","frontDelt"],["chest","triceps"],"incline bench"],
+ ["Incline dumbbell press","Chest",["upperChest","frontDelt"],["chest","triceps"],"incline db"],
  ["Decline bench press","Chest",["chest"],["triceps"],""],
- ["Smith machine bench press","Chest",["chest"],["frontDelt","triceps"],"smith"],
- ["Chest press machine","Chest",["chest"],["frontDelt","triceps"],""],
- ["Push-up","Chest",["chest"],["triceps","frontDelt"],"pushup press up"],
+ ["Smith machine bench press","Chest",["chest"],["upperChest","frontDelt","triceps"],"smith"],
+ ["Chest press machine","Chest",["chest"],["upperChest","frontDelt","triceps"],""],
+ ["Push-up","Chest",["chest"],["upperChest","triceps","frontDelt","serratus"],"pushup press up"],
  ["Chest dips","Chest",["chest","triceps"],["frontDelt"],"dip"],
  ["Dumbbell fly","Chest",["chest"],["frontDelt"],"flye db"],
- ["Cable fly","Chest",["chest"],["frontDelt"],"crossover flye"],
+ ["Cable fly","Chest",["chest"],["upperChest","frontDelt"],"crossover flye"],
+ ["Low-to-high cable fly","Chest",["upperChest"],["frontDelt"],"incline crossover upper chest"],
+ ["Incline dumbbell fly","Chest",["upperChest"],["frontDelt"],"incline flye"],
+ ["Incline smith press","Chest",["upperChest","frontDelt"],["chest","triceps"],"smith incline"],
  ["Pec deck","Chest",["chest"],["frontDelt"],"butterfly machine fly"],
  ["Overhead press","Shoulders",["frontDelt","sideDelt"],["triceps","traps"],"ohp military barbell"],
  ["Seated dumbbell shoulder press","Shoulders",["frontDelt","sideDelt"],["triceps"],"db ohp"],
@@ -165,12 +169,14 @@ var EX = [
  ["T-bar row","Back",["upperBack","lats"],["biceps","rearDelt","lowerBack"],"tbar"],
  ["Chest-supported row","Back",["upperBack"],["lats","rearDelt","biceps"],"seal row incline row"],
  ["Machine row","Back",["upperBack","lats"],["biceps","rearDelt"],""],
- ["Dumbbell pullover","Back",["lats"],["chest"],""],
+ ["Dumbbell pullover","Back",["lats"],["chest","serratus"],""],
  ["Deadlift","Back",["hamstrings","glutes","lowerBack"],["traps","forearms","quads","upperBack"],"conventional"],
  ["Rack pull","Back",["lowerBack","traps","upperBack"],["glutes","forearms"],""],
  ["Back extension","Back",["lowerBack"],["glutes","hamstrings"],"hyperextension hyper"],
  ["Good morning","Back",["lowerBack","hamstrings"],["glutes"],""],
- ["Barbell shrug","Back",["traps"],["forearms"],"traps"],
+ ["Barbell shrug","Back",["traps"],["forearms","neck"],"traps"],
+ ["Neck curl","Back",["neck"],[],"neck flexion"],
+ ["Neck extension","Back",["neck"],["traps"],"neck harness"],
  ["Dumbbell shrug","Back",["traps"],["forearms"],"traps"],
  ["Barbell curl","Arms",["biceps"],["forearms"],"bicep"],
  ["Dumbbell curl","Arms",["biceps"],["forearms"],"bicep db"],
@@ -218,6 +224,7 @@ var EX = [
  ["Standing calf raise","Legs",["calves"],[],"calves"],
  ["Seated calf raise","Legs",["calves"],[],"calves"],
  ["Leg press calf raise","Legs",["calves"],[],"calves"],
+ ["Tibialis raise","Legs",["tibialis"],[],"tib raise shin"],
  ["Crunch","Core",["abs"],[],"abs"],
  ["Cable crunch","Core",["abs"],[],"abs"],
  ["Sit-up","Core",["abs"],[],"situp abs"],
@@ -225,22 +232,36 @@ var EX = [
  ["Hanging leg raise","Core",["abs"],["obliques","forearms"],"abs"],
  ["Lying leg raise","Core",["abs"],[],"abs"],
  ["Plank","Core",["abs"],["obliques"],"core"],
- ["Ab wheel rollout","Core",["abs"],["lats"],"rollout"],
+ ["Ab wheel rollout","Core",["abs"],["lats","serratus"],"rollout"],
  ["Russian twist","Core",["obliques"],["abs"],""],
  ["Side plank","Core",["obliques"],["abs"],""],
  ["Cable woodchopper","Core",["obliques"],["abs"],"woodchop"],
- ["Pallof press","Core",["obliques"],["abs"],"anti rotation"]
+ ["Pallof press","Core",["obliques"],["abs"],"anti rotation"],
+ ["Serratus cable punch","Core",["serratus"],["frontDelt"],"scap push up protraction"]
 ];
 var GROUPS = ["All","Chest","Shoulders","Back","Arms","Legs","Core"];
 var EXBY = {}; EX.forEach(function(e){ EXBY[e[0]] = e; });
 function norm(s){ return s.toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
 function search(q, group){
-  var words = norm(q).split(" ").filter(Boolean);
-  return EX.filter(function(e){
-    if (group && group!=="All" && e[1]!==group) return false;
-    var hay = norm(e[0]+" "+e[4]+" "+e[2].concat(e[3]).map(function(m){return MUSCLES[m].n;}).join(" ")+" "+e[1]);
-    return words.every(function(w){ return hay.indexOf(w)>=0; });
+  var nq = norm(q), words = nq.split(" ").filter(Boolean);
+  var out = [];
+  EX.forEach(function(e, i){
+    if (group && group!=="All" && e[1]!==group) return;
+    if (!words.length){ out.push([0,i,e]); return; }
+    var name = norm(e[0]), nameT = name.split(" ");
+    var hayT = norm(e[0]+" "+e[4]+" "+e[2].concat(e[3]).map(function(m){return MUSCLES[m].n;}).join(" ")+" "+e[1]).split(" ");
+    var pre = function(toks){ return words.every(function(w){ return toks.some(function(t){ return t.indexOf(w)===0; }); }); };
+    var rank;
+    if (name.indexOf(nq)===0) rank = 0;
+    else if (name.indexOf(nq)>=0) rank = 1;
+    else if (pre(nameT)) rank = 2;
+    else if (pre(norm(e[4]+" "+e[2].map(function(m){return MUSCLES[m].n;}).join(" ")).split(" "))) rank = 3;
+    else if (pre(hayT)) rank = 4;
+    else return;
+    out.push([rank,i,e]);
   });
+  if (words.length) out.sort(function(a,b){ return a[0]-b[0] || a[1]-b[1]; });
+  return out.map(function(x){ return x[2]; });
 }
 function musclesFromExercises(list){
   var out = {};
@@ -252,42 +273,50 @@ function musclesFromExercises(list){
 }
 
 // ---------- body shapes (left half; mirrored) ----------
-var SIL = "M100,50 L91,50 Q89,61 80,65 L62,70 Q49,75 47,90 L43,120 Q39,150 37,170 L33,200 Q31,214 35,224 L45,224 Q47,210 49,198 L57,160 Q61,140 64,128 L66,150 Q64,175 65,196 L62,215 Q57,260 60,300 L63,340 Q60,372 65,402 L66,420 L88,421 L86,402 Q90,362 87,330 L92,282 Q96,242 98,224 L100,224 Z";
+var SIL = "M100,46 L91,46 Q90,57 84,61 Q73,65 62,67 Q48,70 45,86 Q43,100 45,112 Q42,130 41,150 Q37,166 36,184 Q35,204 38,218 Q36,232 40,244 L47,244 Q49,232 46,217 Q52,192 58,164 Q62,148 63,130 L65,116 Q66,150 70,180 Q66,196 64,214 Q59,244 62,280 Q64,300 69,318 Q66,330 66,346 Q63,370 70,396 L72,410 Q69,420 78,423 L91,423 Q91,414 88,404 Q92,380 93,352 Q94,330 92,318 Q98,280 98,240 L100,236 Z";
 var FRONT = [
- ["traps","M91,55 Q86,63 75,68 L87,70 Q92,65 94,58 Z"],
- ["sideDelt","M61,71 Q47,75 46,92 L48,103 Q51,88 57,80 Z"],
- ["frontDelt","M61,71 Q67,71 73,73 Q71,86 62,94 Q55,99 49,104 Q51,89 57,80 Z"],
- ["chest","M98,73 L75,73 Q67,84 64,97 Q70,109 84,111 Q94,111 98,105 Z"],
- ["biceps","M50,106 Q45,121 45,139 Q51,147 57,139 Q62,121 61,101 Z"],
- ["forearms","M44,149 Q38,171 35,197 L44,199 Q50,177 57,151 Z"],
- ["obliques","M81,114 Q70,112 66,122 Q66,150 70,173 Q78,177 84,171 Q80,141 81,114 Z"],
- ["abs","M98,113 L84,115 Q82,141 85,171 Q90,183 98,185 Z"],
- ["quads","M95,226 Q80,218 66,213 Q60,252 64,302 Q72,314 82,310 Q92,282 93,252 Z"],
- ["adductors","M99,225 L97,227 Q95,252 86,290 Q96,264 99,246 Z"],
- ["calves","M66,332 Q61,362 67,394 L78,394 Q84,362 82,334 Z"]
+ ["neck","M91,47 Q89,56 92,63 L98,66 Q97,55 95,47 Z"],
+ ["traps","M89,52 Q82,61 67,66 Q79,68 91,64 Q88,58 89,52 Z"],
+ ["sideDelt","M62,67 Q49,71 46,85 Q45,97 50,106 L54,100 Q50,88 55,78 Q58,71 62,67 Z"],
+ ["frontDelt","M62,67 Q55,72 54,82 Q53,92 54,100 Q62,92 70,84 Q76,76 75,70 Q68,67 62,67 Z"],
+ ["upperChest","M98,70 L77,70 Q72,77 71,86 Q85,83 98,86 Z"],
+ ["chest","M98,87 Q84,84 71,87 Q66,95 66,105 Q74,115 88,115 Q96,114 98,109 Z"],
+ ["serratus","M67,110 L74,113 L69,117 L75,121 L70,125 L76,129 L69,133 Q65,121 67,110 Z"],
+ ["biceps","M56,102 Q48,112 47,128 Q48,142 54,148 Q61,140 62,124 Q62,110 56,102 Z"],
+ ["forearms","M47,152 Q40,164 38,184 Q37,200 40,214 L46,214 Q52,190 58,160 Q55,152 47,152 Z"],
+ ["obliques","M84,119 Q75,119 71,126 Q68,150 71,178 Q76,192 86,199 Q84,170 84,142 Z"],
+ ["abs","M98,117 L87,119 Q85,140 86,165 Q88,190 98,207 Z"],
+ ["adductors","M98,213 Q92,215 88,221 Q86,241 90,263 Q96,251 98,233 Z"],
+ ["quads","M86,212 Q73,206 66,215 Q60,241 63,277 Q66,300 74,314 Q84,316 90,306 Q94,286 91,265 Q86,241 87,221 Z"],
+ ["tibialis","M70,331 Q66,351 70,381 Q73,392 78,397 Q79,361 77,333 Z"],
+ ["calves","M88,331 Q93,351 90,378 Q86,390 82,395 Q81,361 83,333 Z"]
 ];
+var FRONT_DECO = ["M100,118 L100,205","M87,136 Q93,134 100,135","M87,153 Q93,151 100,152","M86,171 Q93,170 100,171","M77,226 Q71,262 77,302","M98,86 L72,86"];
 var BACK = [
- ["lats","M72,84 Q64,102 66,128 Q74,153 92,171 Q94,149 92,129 Q86,105 72,84 Z"],
- ["traps","M100,49 L91,53 Q85,63 70,69 Q84,74 92,88 L100,100 Z"],
- ["upperBack","M100,101 L92,90 Q84,80 72,78 Q76,91 88,105 L94,125 L100,127 Z"],
- ["rearDelt","M64,70 Q50,73 47,90 Q55,90 63,92 Q70,82 70,72 Z"],
- ["sideDelt","M55,74 Q46,79 46,94 L48,103 Q49,92 54,86 Z"],
- ["triceps","M50,104 Q44,121 46,141 Q52,147 58,139 Q62,119 61,97 Z"],
- ["forearms","M44,149 Q38,171 35,197 L44,199 Q50,177 57,151 Z"],
- ["lowerBack","M100,131 L94,129 Q90,151 92,173 Q96,183 100,185 Z"],
- ["glutes","M100,190 Q84,186 70,194 Q62,212 66,232 Q82,242 99,234 Z"],
- ["hamstrings","M96,241 Q80,245 66,239 Q60,272 66,308 Q76,316 84,308 Q94,278 96,241 Z"],
- ["calves","M66,328 Q58,352 66,382 Q74,390 82,380 Q86,352 82,330 Z"]
+ ["traps","M100,44 L92,47 Q89,60 66,68 Q80,73 88,88 Q94,105 100,126 Z"],
+ ["sideDelt","M62,67 Q49,71 46,85 Q45,97 50,106 L54,99 Q51,87 56,78 Z"],
+ ["rearDelt","M63,68 Q55,72 52,84 Q61,83 71,87 Q72,74 63,68 Z"],
+ ["upperBack","M86,88 Q79,78 70,80 Q66,92 70,103 Q81,105 93,114 L95,108 Q91,98 86,88 Z"],
+ ["lats","M70,105 Q66,117 66,131 Q70,157 84,179 Q92,187 98,189 L98,161 Q94,141 92,119 Q82,109 70,105 Z"],
+ ["lowerBack","M100,130 L95,132 Q93,161 94,191 Q97,199 100,201 Z"],
+ ["triceps","M54,100 Q46,112 46,130 Q48,146 56,150 Q62,140 62,122 Q62,108 54,100 Z"],
+ ["forearms","M47,152 Q40,164 38,184 Q37,200 40,214 L46,214 Q52,190 58,160 Q55,152 47,152 Z"],
+ ["glutes","M99,204 Q84,198 72,206 Q64,221 68,239 Q78,251 92,249 Q98,245 99,237 Z"],
+ ["hamstrings","M92,253 Q78,255 68,247 Q62,271 65,301 Q70,316 78,318 Q82,300 84,272 Q86,300 90,316 Q96,300 96,271 Z"],
+ ["adductors","M99,252 L96,253 Q95,277 92,300 Q98,281 99,263 Z"],
+ ["calves","M70,330 Q62,346 64,368 Q68,384 76,389 Q80,370 81,347 Q82,370 86,389 Q94,383 94,361 Q92,341 86,330 Z"]
 ];
+var BACK_DECO = ["M100,126 L100,200","M53,112 Q55,128 56,146","M81,347 L81,330"];
 var MIR = ' transform="translate(200,0) scale(-1,1)"';
-function svgFor(list, view){
-  var s = '<svg class="body" viewBox="20 0 160 430" role="img" aria-label="'+view+' muscles">';
-  s += '<circle class="sil" cx="100" cy="28" r="19"/><path class="sil" d="'+SIL+'"/><path class="sil" d="'+SIL+'"'+MIR+'/>';
+function svgFor(list, deco, view){
+  var s = '<svg class="body" viewBox="22 0 156 432" role="img" aria-label="'+view+' muscles">';
+  s += '<ellipse class="sil" cx="100" cy="27" rx="16" ry="20"/><path class="sil" d="'+SIL+'"/><path class="sil" d="'+SIL+'"'+MIR+'/>';
   list.forEach(function(it){
     var t = MUSCLES[it[0]].n;
     s += '<path class="m" data-m="'+it[0]+'" d="'+it[1]+'"><title>'+t+'</title></path>';
     s += '<path class="m" data-m="'+it[0]+'" d="'+it[1]+'"'+MIR+'><title>'+t+'</title></path>';
   });
+  deco.forEach(function(d){ s += '<path class="deco" d="'+d+'"/><path class="deco" d="'+d+'"'+MIR+'/>'; });
   return s+'</svg>';
 }
 
@@ -310,7 +339,7 @@ var SHELL = ''+
  '<header><div><h1>Muscle<span>Map</span></h1><div class="sub">Log what you trained. Tap a muscle to see when it’s ready again.</div></div><div class="save" id="save"></div></header>'+
  '<div class="grid">'+
   '<div class="left"><div class="card o1">'+
-   '<div class="bodies"><div class="fig"><div class="lbl">Front</div>'+svgFor(FRONT,"Front")+'</div><div class="fig"><div class="lbl">Back</div>'+svgFor(BACK,"Back")+'</div></div>'+
+   '<div class="bodies"><div class="fig"><div class="lbl">Front</div>'+svgFor(FRONT,FRONT_DECO,"Front")+'</div><div class="fig"><div class="lbl">Back</div>'+svgFor(BACK,BACK_DECO,"Back")+'</div></div>'+
    '<div class="legend"><span><i style="background:var(--red)"></i>Just trained</span><span><i style="background:var(--amber)"></i>Recovering</span><span><i style="background:var(--green)"></i>Ready</span><span><i style="background:var(--over)"></i>7+ days since</span><span><i style="background:var(--idle)"></i>No data</span></div>'+
   '</div>'+
   '<div class="card o5"><div class="h2">Exercise library <small class="cnt">'+EX.length+'</small></div>'+

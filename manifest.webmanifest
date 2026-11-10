@@ -1,6 +1,6 @@
 {
-  "name": "Muscle Map",
-  "short_name": "Muscle Map",
+  "name": "RecoveryMap",
+  "short_name": "RecoveryMap",
   "description": "Log your gym sessions and see when each muscle is ready to train again.",
   "start_url": "./",
   "scope": "./",

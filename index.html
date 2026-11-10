@@ -31,7 +31,7 @@ h1 span{color:var(--accent)}
 .save{font-size:12px;color:var(--muted)}
 .grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
 .left{display:flex;flex-direction:column;gap:16px}
-@media (max-width:820px){.grid{grid-template-columns:1fr}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}
  .left,.side{display:contents!important}
  .o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}.o7{order:7}
  .inp,textarea,input,select{font-size:16px}
@@ -121,6 +121,7 @@ svg.body .hit{fill:none;stroke:transparent;stroke-width:10;pointer-events:stroke
 .rbb{display:flex;gap:6px}
 .rbb button{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:12.5px;cursor:pointer;color:var(--text)}
 .tabbar{display:none}
+.tbadge{display:none}
 @media (max-width:820px){
  body[data-tab] [data-tab]:not(nav){display:none}
  body[data-tab="body"] [data-tab="body"],body[data-tab="log"] [data-tab="log"],body[data-tab="hist"] [data-tab="hist"],body[data-tab="lib"] [data-tab="lib"]{display:block!important}
@@ -128,8 +129,8 @@ svg.body .hit{fill:none;stroke:transparent;stroke-width:10;pointer-events:stroke
  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;background:rgba(17,19,23,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
  .tabbar button{flex:1;background:none;border:0;color:var(--muted);padding:10px 4px;font-family:"Barlow Condensed",sans-serif;font-size:16px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;position:relative;border-radius:10px}
  .tabbar button.on{color:var(--accent);background:rgba(198,244,50,.08)}
- .badge:empty{display:none!important}
- .badge{position:absolute;top:2px;right:6px;padding:0 5px;min-width:17px;height:17px;border-radius:9px;background:var(--accent);color:#111;font-style:normal;font-size:11px;line-height:17px;font-family:Inter,sans-serif}
+ .tbadge:empty{display:none!important}
+ .tbadge{display:block;position:absolute;top:2px;right:6px;padding:0 5px;min-width:17px;height:17px;border-radius:9px;background:var(--accent);color:#111;font-style:normal;font-size:11px;line-height:17px;font-family:Inter,sans-serif}
  .restbar{bottom:calc(72px + env(safe-area-inset-bottom))}
 }
 .exrow{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
@@ -160,8 +161,16 @@ svg.body .hit{fill:none;stroke:transparent;stroke-width:10;pointer-events:stroke
 .hist li.ed{background:rgba(198,244,50,.05)}
 .hb{flex:1;cursor:pointer;min-width:0}
 .hn{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.4px;color:var(--accent);line-height:1.1;margin-bottom:2px}
-.hx{display:flex;justify-content:space-between;gap:10px}
-.hx small{color:var(--muted);white-space:nowrap}
+.hist li.hs{display:block;padding:10px 0}
+.hh{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.hl{cursor:pointer;margin-top:6px}
+.hm{margin-top:3px}
+.hx{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:2px 0}
+.hx span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hx small{color:var(--muted);white-space:nowrap;flex:none}
+.hx small b{font-weight:600}
+.it-hard{color:#f87171}
+.it-light{color:#7dd3fc}
 .ha{display:flex;gap:4px;align-items:flex-start}
 .ghost.sm{padding:4px 9px;font-size:12px}
 .reclist{list-style:none;padding:0;margin:6px 0 0}
@@ -555,7 +564,7 @@ var SHELL = ''+
  '<p>These are general estimates, not medical advice. Everyone recovers differently, so listen to your body. If something hurts, rest it.</p></footer>'+
 '</div>';
 SHELL += '<div id="rest" class="restbar" hidden></div>'+
-  '<nav class="tabbar" id="tabbar">'+[["body","Body"],["log","Log"],["hist","History"],["lib","Library"]].map(function(t){ return '<button data-tabgo="'+t[0]+'"><span>'+t[1]+'</span><i class="badge" id="badge-'+t[0]+'"></i></button>'; }).join("")+'</nav>';
+  '<nav class="tabbar" id="tabbar">'+[["body","Body"],["log","Log"],["lib","Library"],["hist","History"]].map(function(t){ return '<button data-tabgo="'+t[0]+'"><span>'+t[1]+'</span><i class="tbadge" id="badge-'+t[0]+'"></i></button>'; }).join("")+'</nav>';
 document.body.insertAdjacentHTML("beforeend", SHELL);
 var $ = function(id){ return document.getElementById(id); };
 
@@ -586,6 +595,14 @@ function numStr(e){
   if (same && sets.length>1) return sets.length+"×"+(sets[0].r||"?")+(sets[0].w ? " @ "+sets[0].w+"kg" : "");
   if (sets.length===1) return "1×"+(sets[0].r||"?")+(sets[0].w ? " @ "+sets[0].w+"kg" : "");
   return sets.map(one).join(" · ");
+}
+function sumStr(e){
+  var sets = (e.sets||[]).filter(function(x){ return x.r || x.w; });
+  if (!sets.length) return "";
+  var rs = sets.map(function(x){ return +x.r||0; }).filter(Boolean), ws = sets.map(function(x){ return +x.w||0; }).filter(Boolean);
+  var rng = function(a){ if (!a.length) return ""; var lo = Math.min.apply(null,a), hi = Math.max.apply(null,a); return lo===hi ? String(lo) : lo+"–"+hi; };
+  var r = rng(rs), w = rng(ws);
+  return sets.length+"×"+(r||"?")+(w ? " @ "+w+"kg" : "");
 }
 function lastFor(n){
   var best = null;
@@ -767,9 +784,10 @@ function render(){
   var ss = state.sessions.slice().sort(function(a,b){ return b.t-a.t; });
   $("hist").innerHTML = ss.length ? ss.slice(0,40).map(function(s){
     var ms = Object.keys(s.muscles).filter(function(m){ return s.muscles[m]==="p"; }).map(function(m){ return MUSCLES[m].n; }).join(", ");
-    var lines = s.ex.length ? s.ex.map(function(e){ var ns = numStr(e); return '<div class="hx"><span>'+esc(e.n)+'</span><small>'+esc(ns)+(ns?' · ':'')+esc(e.i||"normal")+'</small></div>'; }).join("") : '<div>'+esc(s.text||ms)+'</div>';
-    return '<li class="'+(ui.edit===s.id?"ed":"")+'"><div class="hb" data-edit="'+s.id+'">'+(s.name?'<div class="hn">'+esc(s.name)+'</div>':'')+'<div class="t">'+fdate(s.t)+(ui.edit===s.id?' · editing':'')+'</div>'+lines+'<div class="t">'+esc(ms)+'</div></div>'+
-      '<div class="ha"><button class="ghost sm" data-again="'+s.id+'">Do again</button><button class="ghost sm" data-edit="'+s.id+'">Edit</button><button class="x" title="Delete" data-del="'+s.id+'">×</button></div></li>';
+    var lines = s.ex.length ? s.ex.map(function(e){ var ns = sumStr(e), it = (e.i && e.i!=="normal") ? e.i : ""; return '<div class="hx"><span>'+esc(e.n)+'</span><small>'+esc(ns)+(ns&&it?' · ':'')+(it?'<b class="it-'+it+'">'+it+'</b>':'')+'</small></div>'; }).join("") : '<div>'+esc(s.text||ms)+'</div>';
+    return '<li class="hs'+(ui.edit===s.id?" ed":"")+'"><div class="hh"><div class="hb" data-edit="'+s.id+'">'+(s.name?'<div class="hn">'+esc(s.name)+'</div>':'')+'<div class="t">'+fdate(s.t)+(ui.edit===s.id?' · editing':'')+'</div></div>'+
+      '<div class="ha"><button class="ghost sm" data-again="'+s.id+'">Do again</button><button class="ghost sm" data-edit="'+s.id+'">Edit</button><button class="x" title="Delete" data-del="'+s.id+'">×</button></div></div>'+
+      '<div class="hl" data-edit="'+s.id+'">'+lines+'<div class="t hm">'+esc(ms)+'</div></div></li>';
   }).join("") : '<li class="empty" style="border:0">No sessions yet.</li>';
   // backup
   if (ui.backup==="copy"){

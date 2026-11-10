@@ -523,7 +523,6 @@ $("txt").addEventListener("keydown", function(e){
   else if (e.key==="ArrowUp"){ ui.hi = Math.max(0, ui.hi-1); renderDrop(); e.preventDefault(); }
   else if (e.key==="Enter"){ e.preventDefault(); if (r[ui.hi]){ if (ui.picked.indexOf(r[ui.hi][0])<0) ui.picked.push(r[ui.hi][0]); ui.q=""; this.value=""; render(); } }
   else if (e.key==="Escape"){ $("drop").hidden = true; }
-  else if (e.key==="Backspace" && !this.value && ui.picked.length){ ui.picked.pop(); render(); }
 });
 $("libq").addEventListener("input", function(){ ui.libQ = this.value; renderLib(); });
 $("clear").addEventListener("click", function(){ ui.picked=[]; ui.q=""; ui.manual={}; $("txt").value=""; $("when").value = toLocalInput(new Date()); render(); });

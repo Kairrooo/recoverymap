@@ -86,6 +86,17 @@ input[type=datetime-local],select{background:var(--panel2);border:1px solid var(
 .x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px}
 .x:hover{color:var(--red)}
 
+svg.body .hit{fill:none;stroke:transparent;stroke-width:10;pointer-events:stroke;cursor:pointer}
+.foot{margin-top:18px;color:var(--muted);font-size:12.5px;line-height:1.55;border-top:1px solid var(--line);padding-top:12px}
+.foot p{margin:0 0 6px}
+.foot b{color:#cdd3dd;font-weight:600}
+.install{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;background:rgba(198,244,50,.07);border:1px solid var(--accent);border-radius:14px;padding:12px 14px;margin-bottom:16px;font-size:14px}
+.cxf{background:var(--panel2);border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px}
+.h3{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:17px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.sl small{text-transform:none;letter-spacing:0;font-size:11.5px;margin-left:6px}
+.ctag{display:inline-block;font-size:10.5px;font-weight:600;color:#111;background:var(--accent);border-radius:5px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.lact{display:flex;align-items:center;gap:4px;flex:none}
+.drop li.addown{color:var(--accent);font-weight:600}
 .exrow{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:8px}
 .exhead{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .exhead b{font-weight:600}
@@ -192,10 +203,14 @@ var EX = [
  ["Incline dumbbell fly","Chest",["upperChest"],["frontDelt"],"incline flye"],
  ["Incline smith press","Chest",["upperChest","frontDelt"],["chest","triceps"],"smith incline"],
  ["Pec deck","Chest",["chest"],["frontDelt"],"butterfly machine fly"],
+ ["Single-arm dumbbell bench press","Chest",["chest"],["triceps","frontDelt","obliques"],"one arm unilateral db"],
+ ["Single-arm cable fly","Chest",["chest"],["frontDelt"],"one arm unilateral crossover"],
+ ["Single-arm landmine press","Chest",["upperChest","frontDelt"],["triceps","serratus","obliques"],"one arm landmine"],
  ["Overhead press","Shoulders",["frontDelt","sideDelt"],["triceps","traps"],"ohp military barbell"],
  ["Seated dumbbell shoulder press","Shoulders",["frontDelt","sideDelt"],["triceps"],"db ohp"],
  ["Shoulder press machine","Shoulders",["frontDelt","sideDelt"],["triceps"],""],
  ["Arnold press","Shoulders",["frontDelt","sideDelt"],["triceps"],""],
+ ["Single-arm dumbbell shoulder press","Shoulders",["frontDelt","sideDelt"],["triceps","obliques"],"one arm unilateral ohp"],
  ["Push press","Shoulders",["frontDelt","sideDelt"],["triceps","traps","quads"],""],
  ["Dumbbell lateral raise","Shoulders",["sideDelt"],[],"side raise laterals db"],
  ["Cable lateral raise","Shoulders",["sideDelt"],[],"side raise laterals"],
@@ -218,6 +233,18 @@ var EX = [
  ["Chest-supported row","Back",["upperBack"],["lats","rearDelt","biceps"],"seal row incline row"],
  ["Machine row","Back",["upperBack","lats"],["biceps","rearDelt"],""],
  ["Dumbbell pullover","Back",["lats"],["chest","serratus"],""],
+ ["Cable lat pullover (rope)","Back",["lats"],["serratus","triceps"],"pullover rope cable straight arm"],
+ ["Cable lat pullover (bar)","Back",["lats"],["serratus","triceps"],"pullover bar cable straight arm"],
+ ["Machine pullover","Back",["lats"],["serratus"],"pullover machine"],
+ ["Single-arm lat pulldown (D-handle)","Back",["lats"],["biceps","upperBack"],"one arm unilateral pulldown handle kneeling"],
+ ["Wide-grip lat pulldown","Back",["lats"],["upperBack","biceps"],"wide pulldown"],
+ ["Neutral-grip lat pulldown","Back",["lats"],["biceps","upperBack"],"neutral parallel pulldown"],
+ ["Assisted pull-up machine","Back",["lats"],["biceps","upperBack"],"assisted pullup"],
+ ["Single-arm cable row","Back",["lats","upperBack"],["biceps","rearDelt"],"one arm unilateral row"],
+ ["Single-arm machine row","Back",["lats","upperBack"],["biceps","rearDelt"],"one arm unilateral hammer strength row"],
+ ["Meadows row","Back",["lats","upperBack"],["biceps","rearDelt","forearms"],"landmine one arm row"],
+ ["Kroc row","Back",["lats","upperBack"],["biceps","forearms","traps"],"heavy dumbbell row one arm"],
+ ["Inverted row","Back",["upperBack","lats"],["biceps","rearDelt"],"bodyweight row australian"],
  ["Deadlift","Back",["hamstrings","glutes","lowerBack"],["traps","forearms","quads","upperBack"],"conventional"],
  ["Rack pull","Back",["lowerBack","traps","upperBack"],["glutes","forearms"],""],
  ["Back extension","Back",["lowerBack"],["glutes","hamstrings"],"hyperextension hyper"],
@@ -234,6 +261,8 @@ var EX = [
  ["Incline dumbbell curl","Arms",["biceps"],[],"bicep"],
  ["Cable curl","Arms",["biceps"],["forearms"],"bicep"],
  ["Concentration curl","Arms",["biceps"],[],"bicep"],
+ ["Single-arm cable curl","Arms",["biceps"],["forearms"],"one arm unilateral bicep"],
+ ["Zottman curl","Arms",["biceps","forearms"],[],"bicep forearm"],
  ["Tricep pushdown","Arms",["triceps"],[],"rope pushdown triceps"],
  ["Overhead tricep extension","Arms",["triceps"],[],"triceps french press"],
  ["Skull crusher","Arms",["triceps"],[],"triceps lying extension"],
@@ -241,10 +270,20 @@ var EX = [
  ["Tricep dips","Arms",["triceps"],["chest","frontDelt"],"dip bench dip"],
  ["Tricep kickback","Arms",["triceps"],[],""],
  ["JM press","Arms",["triceps"],["chest"],""],
- ["Wrist curl","Arms",["forearms"],[],"forearm"],
- ["Reverse curl","Arms",["forearms"],["biceps"],"forearm"],
- ["Farmer's walk","Arms",["forearms","traps"],["abs"],"farmers carry grip"],
- ["Dead hang","Arms",["forearms"],["lats"],"grip"],
+ ["Single-arm tricep pushdown","Arms",["triceps"],[],"one arm unilateral triceps"],
+ ["Single-arm overhead dumbbell extension","Arms",["triceps"],[],"one arm unilateral triceps"],
+ ["Wrist curl","Forearms",["forearms"],[],"forearm wrist flexion barbell"],
+ ["Dumbbell wrist curl","Forearms",["forearms"],[],"forearm one arm wrist"],
+ ["Behind-the-back wrist curl","Forearms",["forearms"],[],"forearm wrist"],
+ ["Reverse wrist curl","Forearms",["forearms"],[],"forearm wrist extension"],
+ ["Cable wrist curl","Forearms",["forearms"],[],"forearm wrist"],
+ ["Reverse curl","Forearms",["forearms"],["biceps"],"forearm overhand curl"],
+ ["Wrist roller","Forearms",["forearms"],[],"forearm roller"],
+ ["Plate pinch","Forearms",["forearms"],[],"grip pinch"],
+ ["Hand gripper","Forearms",["forearms"],[],"grip"],
+ ["Farmer's walk","Forearms",["forearms","traps"],["abs"],"farmers carry grip"],
+ ["Suitcase carry","Forearms",["forearms","obliques"],["traps"],"one arm carry grip"],
+ ["Dead hang","Forearms",["forearms"],["lats"],"grip hang"],
  ["Back squat","Legs",["quads","glutes"],["adductors","lowerBack"],"squat barbell"],
  ["Front squat","Legs",["quads"],["glutes","abs"],"squat"],
  ["Hack squat","Legs",["quads"],["glutes"],"squat machine"],
@@ -256,11 +295,15 @@ var EX = [
  ["Reverse lunge","Legs",["quads","glutes"],["adductors","hamstrings"],"lunges"],
  ["Step-up","Legs",["quads","glutes"],["hamstrings"],"step up"],
  ["Leg extension","Legs",["quads"],[],""],
+ ["Single-leg leg extension","Legs",["quads"],[],"one leg unilateral"],
+ ["Single-leg leg press","Legs",["quads","glutes"],["adductors"],"one leg unilateral"],
  ["Romanian deadlift","Legs",["hamstrings","glutes"],["lowerBack","forearms"],"rdl"],
  ["Stiff-leg deadlift","Legs",["hamstrings","glutes"],["lowerBack"],"sldl"],
+ ["Single-leg Romanian deadlift","Legs",["hamstrings","glutes"],["lowerBack","adductors"],"one leg unilateral rdl"],
  ["Sumo deadlift","Legs",["glutes","quads","adductors","hamstrings"],["lowerBack","traps","forearms"],""],
  ["Lying leg curl","Legs",["hamstrings"],["calves"],"hamstring curl"],
  ["Seated leg curl","Legs",["hamstrings"],["calves"],"hamstring curl"],
+ ["Single-leg leg curl","Legs",["hamstrings"],["calves"],"one leg unilateral hamstring curl"],
  ["Nordic curl","Legs",["hamstrings"],[],"nordics"],
  ["Hip thrust","Legs",["glutes"],["hamstrings"],"barbell glute"],
  ["Glute bridge","Legs",["glutes"],["hamstrings"],""],
@@ -272,6 +315,7 @@ var EX = [
  ["Standing calf raise","Legs",["calves"],[],"calves"],
  ["Seated calf raise","Legs",["calves"],[],"calves"],
  ["Leg press calf raise","Legs",["calves"],[],"calves"],
+ ["Single-leg calf raise","Legs",["calves"],[],"one leg unilateral calves"],
  ["Tibialis raise","Legs",["tibialis"],[],"tib raise shin"],
  ["Crunch","Core",["abs"],[],"abs"],
  ["Cable crunch","Core",["abs"],[],"abs"],
@@ -287,8 +331,14 @@ var EX = [
  ["Pallof press","Core",["obliques"],["abs"],"anti rotation"],
  ["Serratus cable punch","Core",["serratus"],["frontDelt"],"scap push up protraction"]
 ];
-var GROUPS = ["All","Chest","Shoulders","Back","Arms","Legs","Core"];
+var GROUPS = ["All","Chest","Shoulders","Back","Arms","Forearms","Legs","Core"];
 var EXBY = {}; EX.forEach(function(e){ EXBY[e[0]] = e; });
+var WEB = true; // true in the GitHub Pages build
+function syncCustom(){
+  EX = EX.filter(function(e){ return !e[5]; });
+  (state.custom||[]).forEach(function(c){ EX.push([c.n, c.g, c.p, c.s, "custom", true]); });
+  EXBY = {}; EX.forEach(function(e){ EXBY[e[0]] = e; });
+}
 function norm(s){ return s.toLowerCase().replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim(); }
 function search(q, group){
   var nq = norm(q), words = nq.split(" ").filter(Boolean);
@@ -356,9 +406,13 @@ var BACK = [
 ];
 var BACK_DECO = ["M100,126 L100,200","M53,112 Q55,128 56,146","M81,347 L81,330"];
 var MIR = ' transform="translate(200,0) scale(-1,1)"';
+var SMALL = ["neck","serratus","tibialis","adductors","forearms","traps","sideDelt","rearDelt","calves"];
 function svgFor(list, deco, view){
   var s = '<svg class="body" viewBox="22 0 156 432" role="img" aria-label="'+view+' muscles">';
   s += '<ellipse class="sil" cx="100" cy="27" rx="16" ry="20"/><path class="sil" d="'+SIL+'"/><path class="sil" d="'+SIL+'"'+MIR+'/>';
+  list.forEach(function(it){
+    if (SMALL.indexOf(it[0])>=0) s += '<path class="hit" data-m="'+it[0]+'" d="'+it[1]+'"/><path class="hit" data-m="'+it[0]+'" d="'+it[1]+'"'+MIR+'/>';
+  });
   list.forEach(function(it){
     var t = MUSCLES[it[0]].n;
     s += '<path class="m" data-m="'+it[0]+'" d="'+it[1]+'"><title>'+t+'</title></path>';
@@ -377,6 +431,7 @@ function migrate(st){
   if (!st || typeof st!=="object") st = {};
   if (!Array.isArray(st.sessions)) st.sessions = [];
   if (!Array.isArray(st.templates)) st.templates = [];
+  if (!Array.isArray(st.custom)) st.custom = [];
   st.sessions.forEach(function(s){
     if (!s.muscles) s.muscles = {};
     if (!Array.isArray(s.ex)) s.ex = [];
@@ -406,20 +461,22 @@ var ui = { sel:null, draft:{}, manual:{}, picked:[], q:"", hi:0, libQ:"", libG:"
 var SHELL = ''+
 '<div class="wrap">'+
  '<header><div><h1>Recovery<span>Map</span></h1><div class="sub">Log what you trained. Tap a muscle to see when it’s ready again.</div></div><div class="save" id="save"></div></header>'+
+ '<div id="install"></div>'+
  '<div class="grid">'+
   '<div class="left"><div class="card o1">'+
    '<div class="bodies"><div class="fig"><div class="lbl">Front</div>'+svgFor(FRONT,FRONT_DECO,"Front")+'</div><div class="fig"><div class="lbl">Back</div>'+svgFor(BACK,BACK_DECO,"Back")+'</div></div>'+
    '<div class="legend"><span><i style="background:var(--red)"></i>Just trained</span><span><i style="background:var(--amber)"></i>Recovering</span><span><i style="background:var(--green)"></i>Ready</span><span><i style="background:var(--over)"></i>7+ days since</span><span><i style="background:var(--idle)"></i>No data</span></div>'+
   '</div>'+
-  '<div class="card o6"><div class="h2">Exercise library <small class="cnt">'+EX.length+'</small></div>'+
+  '<div class="card o6"><div class="h2">Exercise library <small class="cnt" id="libcnt"></small></div>'+
    '<input class="inp" id="libq" placeholder="Search exercises or muscles…" autocomplete="off">'+
    '<div class="tabs" id="libg">'+GROUPS.map(function(g){ return '<button class="tab'+(g==="All"?" on":"")+'" data-g="'+g+'">'+g+'</button>'; }).join("")+'</div>'+
+   '<div class="row" style="margin-top:6px"><button class="ghost" id="cx-open">+ Add your own exercise</button></div><div id="cxform"></div>'+
    '<ul class="lib" id="lib"></ul></div>'+
   '</div>'+
   '<div class="side">'+
    '<div class="card o2" id="logcard"><div class="h2" id="logTitle">Log a session</div>'+
     '<div class="tpls" id="tpls"></div>'+
-    '<input class="inp" id="sname" placeholder="Session name (optional), e.g. Chest only" autocomplete="off" style="margin-bottom:8px">'+
+    '<input class="inp" id="sname" placeholder="Session name (optional)" autocomplete="off" style="margin-bottom:8px">'+
     '<div class="ac"><input class="inp" id="txt" placeholder="Start typing an exercise… (e.g. bench, rdl, lateral)" autocomplete="off"><ul class="drop" id="drop" hidden></ul></div>'+
     '<div id="picked"></div>'+
     '<div class="sl">Muscles hit</div><div class="chips" id="chips"></div>'+
@@ -436,6 +493,8 @@ var SHELL = ''+
     '<div class="row"><button class="ghost" id="bk-copy">Copy backup</button><button class="ghost" id="bk-restore">Restore from backup</button></div><div id="bk"></div></div>'+
   '</div>'+
  '</div>'+
+ '<footer class="foot"><p><b>How recovery is estimated:</b> big muscles (chest, back, quads, hamstrings, glutes) get about 72 hours, medium ones (shoulders, arms, traps, neck, adductors) about 48 hours, and small ones (calves, abs, forearms, serratus, shins) about 36 hours. Muscles that only helped get half of that. Light shortens it by 25% and Hard adds 25%. The hardest exercise that hit a muscle decides its time.</p>'+
+ '<p>These are general estimates, not medical advice. Everyone recovers differently, so listen to your body. If something hurts, rest it.</p></footer>'+
 '</div>';
 document.body.insertAdjacentHTML("beforeend", SHELL);
 var $ = function(id){ return document.getElementById(id); };
@@ -583,7 +642,7 @@ function renderLogMeta(){
   $("clear").textContent = ui.edit ? "Cancel" : "Clear";
   $("logcard").classList.toggle("editing", !!ui.edit);
 }
-function renderAll(){ renderPicked(); renderTemplates(); renderLogMeta(); render(); }
+function renderAll(){ renderPicked(); renderTemplates(); renderLogMeta(); renderCx(); render(); }
 function render(){
   var now = Date.now();
   ui.draft = currentDraft();
@@ -649,16 +708,44 @@ function renderDrop(){
   d.innerHTML = r.length ? r.map(function(e,i){
     var has = names.indexOf(e[0])>=0;
     return '<li class="'+(i===ui.hi?"hi":"")+'" data-add="'+esc(e[0])+'"><span>'+esc(e[0])+(has?' <em>✓ added</em>':'')+'</span><small>'+e[2].map(function(m){return MUSCLES[m].n;}).join(", ")+'</small></li>';
-  }).join("") : '<li class="none">No exercise called “'+esc(q)+'” in the list</li>';
+  }).join("") : '<li class="none">No exercise called “'+esc(q)+'” in the list</li><li class="addown" data-addown="'+esc(q)+'">+ Add “'+esc(q)+'” as your own exercise</li>';
 }
 function renderLib(){
   var r = search(ui.libQ, ui.libG), html = "", last = "", names = pickedNames();
+  var grouped = ui.libG==="All" && !ui.libQ.trim();
+  if (grouped){ var gi = function(e){ return GROUPS.indexOf(e[1]); }; r = r.map(function(e,i){ return [e,i]; }).sort(function(a,b){ return (gi(a[0])-gi(b[0])) || (a[1]-b[1]); }).map(function(x){ return x[0]; }); }
   r.forEach(function(e){
-    if (ui.libG==="All" && e[1]!==last){ html += '<li class="gh">'+e[1]+'</li>'; last = e[1]; }
+    if (grouped && e[1]!==last){ html += '<li class="gh">'+e[1]+'</li>'; last = e[1]; }
     var has = names.indexOf(e[0])>=0;
-    html += '<li class="li'+(has?" on":"")+'" data-add="'+esc(e[0])+'"><div><div>'+esc(e[0])+'</div><small><b>'+e[2].map(function(m){return MUSCLES[m].n;}).join(", ")+'</b>'+(e[3].length?' · '+e[3].map(function(m){return MUSCLES[m].n;}).join(", "):'')+'</small></div><span class="add">'+(has?"✓":"+")+'</span></li>';
+    html += '<li class="li'+(has?" on":"")+'" data-add="'+esc(e[0])+'"><div><div>'+esc(e[0])+(e[5]?' <span class="ctag">Custom</span>':'')+'</div><small><b>'+e[2].map(function(m){return MUSCLES[m].n;}).join(", ")+'</b>'+(e[3].length?' · '+e[3].map(function(m){return MUSCLES[m].n;}).join(", "):'')+'</small></div>'+
+      '<span class="lact">'+(e[5]?'<button class="x" data-delcx="'+esc(e[0])+'" title="Delete custom exercise">×</button>':'')+'<span class="add">'+(has?"✓":"+")+'</span></span></li>';
   });
   $("lib").innerHTML = html || '<li class="empty" style="padding:8px 0">Nothing matches.</li>';
+  $("libcnt").textContent = EX.length;
+}
+function renderCx(){
+  if (!ui.cx){ $("cxform").innerHTML = ""; $("cx-open").style.display = ""; return; }
+  $("cx-open").style.display = "none";
+  var c = ui.cx;
+  $("cxform").innerHTML = '<div class="cxf"><div class="h3">New exercise</div>'+
+    '<input class="inp" id="cx-name" placeholder="Exercise name, e.g. Hammer Strength incline press" value="'+esc(c.n)+'" autocomplete="off">'+
+    '<div class="row"><label>Group</label><select id="cx-g">'+GROUPS.slice(1).map(function(g){ return '<option'+(g===c.g?' selected':'')+'>'+g+'</option>'; }).join("")+'</select></div>'+
+    '<div class="sl">Muscles it works <small>tap once for primary, twice for secondary</small></div>'+
+    '<div class="chips">'+Object.keys(MUSCLES).map(function(m){ var r = c.m[m]; return '<span class="chip '+(r||"")+'" data-cxm="'+m+'">'+MUSCLES[m].n+(r?'<small>'+(r==="p"?"primary":"secondary")+'</small>':'')+'</span>'; }).join("")+'</div>'+
+    '<div class="hint" id="cx-msg"></div>'+
+    '<div class="row"><button class="btn" id="cx-save">Save exercise</button><button class="ghost" id="cx-cancel">Cancel</button></div></div>';
+}
+function renderInstall(){
+  var el = $("install"); if (!el) return;
+  if (!WEB || ui.noInstall){ el.innerHTML = ""; return; }
+  var standalone = (window.navigator.standalone===true) || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches);
+  if (standalone){ el.innerHTML = ""; return; }
+  var ua = navigator.userAgent || "", ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
+  var msg = "";
+  if (ui.installEvt) msg = '<b>Install RecoveryMap</b> to open it from your home screen like an app.</div><div class="row" style="margin-top:8px"><button class="btn" id="inst-go">Install app</button>';
+  else if (ios) msg = '<b>Install RecoveryMap:</b> tap the <b>Share</b> button in Safari, then <b>Add to Home Screen</b>. It opens like an app and keeps your workouts safer.';
+  else { el.innerHTML = ""; return; }
+  el.innerHTML = '<div class="install"><div>'+msg+'</div><button class="x" id="inst-x" title="Dismiss">×</button></div>';
 }
 function addEx(n){ if (pickedNames().indexOf(n)<0) ui.picked.push(newEntry(n)); }
 function toggleEx(n){
@@ -731,6 +818,13 @@ document.addEventListener("click", function(e){
   var t = e.target; if (!t.closest) return;
   var c;
   if ((c = t.closest("svg [data-m]"))){ var id = c.getAttribute("data-m"); ui.sel = ui.sel===id ? null : id; render(); return; }
+  if ((c = t.closest("[data-delcx]"))){
+    if (c.dataset.armed){ var cn = c.getAttribute("data-delcx"); state.custom = state.custom.filter(function(x){ return x.n!==cn; }); syncCustom(); ui.picked = ui.picked.filter(function(x){ return EXBY[x.n]; }); persist(); }
+    else { c.dataset.armed = "1"; c.textContent = "Delete?"; c.style.color = "var(--red)"; c.style.fontSize = "12px"; setTimeout(function(){ if (c.isConnected){ delete c.dataset.armed; c.textContent="×"; c.style.color=""; c.style.fontSize=""; } }, 3000); }
+    return;
+  }
+  if ((c = t.closest("[data-addown]"))){ ui.cx = {n:c.getAttribute("data-addown"), g:"Chest", m:{}}; ui.q=""; $("txt").value=""; $("drop").hidden = true; renderCx(); try { $("cxform").scrollIntoView({behavior:"smooth", block:"center"}); } catch(er){} return; }
+  if ((c = t.closest("[data-cxm]"))){ var mm = c.getAttribute("data-cxm"), cur0 = ui.cx.m[mm]; ui.cx.n = $("cx-name").value; ui.cx.g = $("cx-g").value; if (!cur0) ui.cx.m[mm] = "p"; else if (cur0==="p") ui.cx.m[mm] = "s"; else delete ui.cx.m[mm]; renderCx(); return; }
   if ((c = t.closest("[data-add]"))){ toggleEx(c.getAttribute("data-add")); if (c.closest("#drop")){ ui.q=""; $("txt").value=""; $("txt").focus(); } renderAll(); return; }
   if ((c = t.closest("[data-unpick]"))){ ui.picked.splice(+c.getAttribute("data-unpick"),1); renderAll(); return; }
   if ((c = t.closest("[data-addset]"))){
@@ -768,6 +862,19 @@ document.addEventListener("click", function(e){
     return;
   }
   switch (t.id){
+    case "cx-open": ui.cx = {n:"", g:ui.libG!=="All"?ui.libG:"Chest", m:{}}; renderCx(); setTimeout(function(){ var n=$("cx-name"); if(n) n.focus(); },0); return;
+    case "cx-cancel": ui.cx = null; renderCx(); return;
+    case "cx-save":
+      var nm2 = ($("cx-name").value||"").trim().replace(/\s+/g," "), g2 = $("cx-g").value;
+      nm2 = nm2.charAt(0).toUpperCase()+nm2.slice(1);
+      var p2 = Object.keys(ui.cx.m).filter(function(m){ return ui.cx.m[m]==="p"; }), s2 = Object.keys(ui.cx.m).filter(function(m){ return ui.cx.m[m]==="s"; });
+      if (!nm2){ $("cx-msg").textContent = "Give it a name."; return; }
+      if (EX.some(function(e){ return e[0].toLowerCase()===nm2.toLowerCase(); })){ $("cx-msg").textContent = "That exercise is already in the list."; return; }
+      if (!p2.length){ $("cx-msg").textContent = "Pick at least one primary muscle."; return; }
+      state.custom.push({n:nm2, g:g2, p:p2, s:s2}); syncCustom(); ui.cx = null;
+      addEx(nm2); persist(); return;
+    case "inst-x": ui.noInstall = true; try { localStorage.setItem("rm.noinstall","1"); } catch(er){} renderInstall(); return;
+    case "inst-go": if (ui.installEvt){ ui.installEvt.prompt(); ui.installEvt = null; renderInstall(); } return;
     case "savetpl": ui.saving = true; renderTemplates(); setTimeout(function(){ var n=$("tplname"); if(n) n.focus(); },0); return;
     case "tplcancel": ui.saving = false; renderTemplates(); return;
     case "tplok":
@@ -796,7 +903,7 @@ document.addEventListener("click", function(e){
       try { j = JSON.parse(raw); } catch(er){}
       if (!j || !Array.isArray(j.sessions)){ $("bkmsg").textContent = "That doesn’t look like a RecoveryMap backup."; return; }
       if (!t.dataset.armed){ t.dataset.armed = "1"; t.textContent = "Tap again to replace "+state.sessions.length+" session(s)"; return; }
-      state = migrate(j); ui.backup = null; resetLog(); persist(); return;
+      state = migrate(j); syncCustom(); ui.backup = null; resetLog(); persist(); return;
   }
 });
 document.addEventListener("input", function(e){
@@ -831,6 +938,10 @@ setInterval(render, 60000);
 // ---------- start ----------
 state = migrate(state);
 loadLocal();
+syncCustom();
+try { ui.noInstall = localStorage.getItem("rm.noinstall")==="1"; } catch(e){}
+window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); ui.installEvt = e; renderInstall(); });
+renderInstall();
 renderAll();
 $("save").textContent = "Saved on this device";
 if ("serviceWorker" in navigator) { window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); }); }

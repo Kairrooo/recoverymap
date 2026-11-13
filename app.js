@@ -1213,6 +1213,7 @@ function renderLib() {
       '"><div><div>' +
       esc(e[0]) +
       (e[5] ? ' <span class="ctag">Custom</span>' : "") +
+      (tagFor(e[0]) ? ' <span class="htag">' + tagFor(e[0]) + "</span>" : "") +
       "</div><small><b>" +
       e[2]
         .map(function (m) {
@@ -1452,12 +1453,78 @@ function renderDetail(stats, now) {
       "h primary · " +
       Math.round(M.h * SECONDARY) +
       "h secondary (normal)</dd>";
+    var hb = "";
+    if (HEADS[m]) {
+      var wk = now - 7 * 86400000,
+        cnt = {},
+        tot = 0;
+      Object.keys(HEADS[m]).forEach(function (k) {
+        cnt[k] = 0;
+      });
+      state.sessions.forEach(function (x) {
+        if (x.t < wk) return;
+        x.ex.forEach(function (e) {
+          var f = FOCUS[e.n];
+          if (f && f[0] === m) {
+            var n = (e.sets || []).length || 1;
+            cnt[f[1]] += n;
+            tot += n;
+          }
+        });
+      });
+      if (tot) {
+        var mx = Math.max.apply(
+          null,
+          Object.keys(cnt).map(function (k) {
+            return cnt[k];
+          }),
+        );
+        hb =
+          '<div class="hbal"><div class="sl" style="margin-top:0">Head focus · last 7 days</div>' +
+          Object.keys(HEADS[m])
+            .map(function (k) {
+              return (
+                '<div class="hrow"><span>' +
+                HEADS[m][k] +
+                '</span><div class="hbar"><div style="width:' +
+                Math.round((cnt[k] / mx) * 100) +
+                '%"></div></div><b>' +
+                cnt[k] +
+                " set" +
+                (cnt[k] === 1 ? "" : "s") +
+                "</b></div>"
+              );
+            })
+            .join("");
+        var low = Object.keys(HEADS[m]).filter(function (k) {
+          return cnt[k] === 0;
+        });
+        if (low.length === 1)
+          hb +=
+            '<div class="hint" style="margin-top:6px">No ' +
+            HEADS[m][low[0]].toLowerCase() +
+            " work this week. " +
+            HEAD_TIP[m][low[0]] +
+            " hit it best.</div>";
+        else if (low.length > 1)
+          hb +=
+            '<div class="hint" style="margin-top:6px">Missing this week: ' +
+            low
+              .map(function (k) {
+                return HEADS[m][k].toLowerCase() + " (" + HEAD_TIP[m][k].toLowerCase() + ")";
+              })
+              .join(", ") +
+            ".</div>";
+        hb += "</div>";
+      }
+    }
     h +=
       "<dt>Last 7 days</dt><dd>" +
       s.hits.filter(function (x) {
         return now - x.t < 7 * 86400000;
       }).length +
       " session(s)</dd></dl>";
+    h += hb;
     var recent = s.hits
       .slice()
       .sort(function (a, b) {

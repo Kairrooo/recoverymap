@@ -353,6 +353,78 @@ var EX = [
   ["Pallof press", "Core", ["obliques"], ["abs"], "anti rotation"],
   ["Serratus cable punch", "Core", ["serratus"], ["frontDelt"], "scap push up protraction"],
 ];
+// Head / region focus (information only, recovery stays per muscle)
+var HEADS = {
+  biceps: { long: "Long head", short: "Short head", brach: "Brachialis" },
+  triceps: { long: "Long head", lat: "Lateral + medial" },
+};
+var HEAD_TIP = {
+  biceps: { long: "Incline curls", short: "Preacher curls", brach: "Hammer curls" },
+  triceps: { long: "Overhead extensions", lat: "Pushdowns" },
+};
+var FOCUS = {};
+[
+  ["biceps", "long", ["Incline dumbbell curl"]],
+  ["biceps", "short", ["Preacher curl", "Concentration curl"]],
+  ["biceps", "brach", ["Hammer curl", "Rope hammer curl", "Reverse curl", "Zottman curl"]],
+  [
+    "triceps",
+    "long",
+    [
+      "Overhead tricep extension",
+      "Overhead cable tricep extension (rope)",
+      "Skull crusher",
+      "Single-arm overhead dumbbell extension",
+    ],
+  ],
+  [
+    "triceps",
+    "lat",
+    [
+      "Tricep pushdown (rope)",
+      "Tricep pushdown (straight bar)",
+      "Tricep pushdown (V-bar)",
+      "Reverse-grip tricep pushdown",
+      "Single-arm tricep pushdown",
+      "Tricep kickback",
+      "Close-grip bench press",
+      "Tricep dips",
+      "JM press",
+    ],
+  ],
+].forEach(function (r) {
+  r[2].forEach(function (n) {
+    FOCUS[n] = [r[0], r[1]];
+  });
+});
+// Plain-word tags for chest and shoulder exercises (these parts are already split on the body map)
+var TAG = {};
+[
+  [
+    "Upper chest",
+    [
+      "Incline barbell bench press",
+      "Incline dumbbell press",
+      "Incline dumbbell fly",
+      "Incline smith press",
+      "Low-to-high cable fly",
+      "Single-arm landmine press",
+    ],
+  ],
+  ["Front delts", ["Front raise"]],
+  [
+    "Side delts",
+    ["Dumbbell lateral raise", "Cable lateral raise", "Machine lateral raise", "Upright row"],
+  ],
+  ["Rear delts", ["Rear delt fly", "Reverse pec deck", "Face pull"]],
+].forEach(function (r) {
+  r[1].forEach(function (n) {
+    TAG[n] = r[0];
+  });
+});
+function tagFor(n) {
+  return FOCUS[n] ? HEADS[FOCUS[n][0]][FOCUS[n][1]] : TAG[n] || "";
+}
 var GROUPS = ["All", "Chest", "Shoulders", "Back", "Arms", "Forearms", "Legs", "Core"];
 var EXBY = {};
 EX.forEach(function (e) {

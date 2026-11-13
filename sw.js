@@ -1,4 +1,4 @@
-const CACHE = "recoverymap-v18";
+const CACHE = "recoverymap-v22";
 const CORE = [
   "./",
   "./index.html",
